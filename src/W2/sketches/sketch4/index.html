@@ -13,17 +13,29 @@
     <script src="../../../../plugin/prism/prism.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.min.js"></script>
     <script src="./script/sketch.js" defer></script>
+    <!-- <script>
+      let username = prompt('당신의 이름은 무엇입니까', '홍길동');
+      let isUserNameCorrect = confirm(
+        '당신의 이름이 ' + username + ' 이 맞습니까?'
+      );
+      if (isUserNameCorrect == true) {
+        document.getElementById('user-name-goes-here').textContent =
+          '환영합니다. ' + username + '님';
+      }
+    </script> -->
   </head>
   <body>
     <div class="viewport">
       <main>
         <section>
           <div class="container"></div>
+          <h2 id="user-name-goes-here"></h2>
         </section>
       </main>
       <footer>
         <section>
           <div class="container">
+            <h2>코드</h2>
             <h6>index.html</h6>
             <pre
               class="line-numbers"
@@ -33,5 +45,15 @@
         </section>
       </footer>
     </div>
+    <script>
+      let username = prompt('당신의 이름은 무엇입니까', '홍길동');
+      let isUserNameCorrect = confirm(
+        '당신의 이름이 ' + username + ' 이 맞습니까?'
+      );
+      if (isUserNameCorrect == true) {
+        document.getElementById('user-name-goes-here').textContent =
+          '환영합니다. ' + username + '님';
+      }
+    </script>
   </body>
 </html>

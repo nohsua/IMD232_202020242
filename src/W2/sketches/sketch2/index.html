@@ -11,27 +11,39 @@
     <link rel="stylesheet" href="../../../../style/style.css" />
     <link rel="stylesheet" href="../../../../plugin/prism/prism.css" />
     <script src="../../../../plugin/prism/prism.js" defer></script>
-    <script src="./script/alertpromptconfirm.js"></script>
+    <script>
+      alert('안녕하세요');
+      let username;
+      username = prompt('당신의 이름은?','홍길동');
+      let confirmVal = confirm('당신의 이름이 ' + username + ' 이/가 맞습니까?');
+      if(confirmVal == true) {
+        alert('환영합니다.' + username + '님.')
+      }
+    </script>
   </head>
   <body>
     <div class="viewport">
+      <header>
+        <section>
+          <div class="container">
+            <h1> 노수아 W2 Sketch2</h1>
+          </div>
+        </section>
+      </header>
       <main>
         <section>
-          <div class="container"></div>
+          <div class="container">
         </section>
       </main>
       <footer>
         <section>
           <div class="container">
+            <h2> 노수아 W2 Sketch2</h2>
             <h6>index.html</h6>
             <pre
               class="line-numbers"
               data-src="./index.html"
-              data-download-link></pre>
-            <h6>index.html</h6>
-            <pre
-              class="line-numbers"
-              data-src="./script/alertpromptconfirm.js"
+              data-line="15-21"
               data-download-link></pre>
           </div>
         </section>
