@@ -1,5 +1,5 @@
 function setup() {
-  setCanvasContainer('canvas', 3, 2, true);
+  setCanvasContainer('canvas', 700, 365);
   background('white');
   noStroke();
 }
