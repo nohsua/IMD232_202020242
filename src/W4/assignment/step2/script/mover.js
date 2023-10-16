@@ -1,18 +1,25 @@
 class Mover {
-  constructor(x, y, mass) {
-    this.pos;
-    this.vel;
-    this.acc;
-    this.mass;
-    this.rad;
-    this.isHover;
-    this.isDragging;
-    this.draggingOffset;
+  constructor(x, y, rad) {
+    this.pos = createVector(x, y);
+    this.vel = createVector(0, 0);
+    this.acc = createVector(0, 0);
+    this.mass = 1;
+    this.rad = rad;
+    this.isHover = false;
+    this.isDragging = false;
+    this.draggingOffset = createVector();
   }
 
-  applyForce(force) {}
+  applyForce(force) {
+    let f = p5.Vector.div(force, this.mass);
+    this.acc.add(f);
+  }
 
-  update() {}
+  update() {
+    this.vel.add(this.acc);
+    this.pos.add(this.vel);
+    this.acc.mult(0);
+  }
 
   edgeBounce() {
     const bounce = -0.7;
@@ -35,18 +42,17 @@ class Mover {
     ellipse(this.pos.x, this.pos.y, 2 * this.rad);
   }
 
-  mouseMoved(mX, mY) {
-    this.isHover =
-      (this.pos.x - mX) ** 2 + (this.pos.y - mY) ** 2 <= this.rad ** 2;
-  }
-
   mousePressed(mX, mY) {
+    this.isHover = dist(this.pos.x, this.pos.y, mX, mY) <= this.rad;
     if (this.isHover) {
+      this.isDragging = true;
+      this.draggingOffset.set(mX - this.pos.x, mY - this.pos.y);
     }
   }
 
   mouseDragged(mX, mY) {
     if (this.isDragging) {
+      this.pos.set(mX - this.draggingOffset.x, mY - this.draggingOffset.y);
     }
   }
 
