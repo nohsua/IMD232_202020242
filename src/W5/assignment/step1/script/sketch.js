@@ -12,7 +12,7 @@ let angleStep;
 function setup() {
   setCanvasContainer('canvas', 1, 1, true);
 
-  let angleBeginVel = (TAU / 360) * 1;
+  let angleBeginVel = (TAU / 360) * 15;
 
   colorMode(HSL, 360, 100, 100, 100);
   background(360, 0, 100);
