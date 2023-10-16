@@ -8,6 +8,19 @@ class Ball {
     this.mass = mass;
     this.rad = this.mass * 5;
     this.color = color(h, s, v);
+
+    const totalObjects = 25;
+
+    const objectsArray = [];
+
+    for (let i = 1; i <= totalObjects; i++) {
+      objectsArray.push(`물체 ${i}`);
+    }
+
+    for (let i = objectsArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [objectsArray[i], objectsArray[j]] = [objectsArray[j], objectsArray[i]];
+    }
   }
 
   applyForce(force) {

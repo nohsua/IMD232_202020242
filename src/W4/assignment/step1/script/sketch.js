@@ -1,33 +1,46 @@
-const bodies = [];
-const bodyNum = 30;
-const G = 1;
+let bodies = [];
+
+let G = 1;
+
+let showVector = false;
 
 function setup() {
-  setCanvasContainer('canvas', 1, 1, true);
-  init();
-  background(255);
+  setCanvasContainer('canvas', 3, 2, true);
+  reset();
 }
 
 function draw() {
-  for (let i = 0; i < bodies.length; i++)
-    for (let j = 0 + 1; j < bodies.length; j++) {
+  background(255);
+
+  for (let i = 0; i < 25; i++) {
+    for (let j = 0; j < 25; j++) {
       if (i !== j) {
         let forceForJ = bodies[i].attract(bodies[j]);
         bodies[j].applyForce(forceForJ);
       }
     }
+    bodies[i].update();
+    bodies[i].display();
+    if (showVector) {
+      bodies[i].displayVectors();
+    }
+  }
 }
-bodies[i].update();
-bodies[i].display();
-if (showVector) {
-  bodies[i].displayVectors();
-}
-bodies.forEach((each) => {});
-background(255);
-bodies.forEach((each) => {});
 
 function mousePressed() {
-  init();
+  if (isMouseInsideCanvas()) {
+    reset();
+  }
 }
 
-function init() {}
+function reset() {
+  for (let i = 0; i < 25; i++) {
+    bodies[i] = new Body(random(width), random(height), random(0.1, 2));
+  }
+}
+
+function keyPressed() {
+  if (key === 's' || key === 'S') {
+    showVector = !showVector;
+  }
+}
