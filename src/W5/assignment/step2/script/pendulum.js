@@ -14,12 +14,16 @@ class Pendulum {
     this.draggingOffset = createVector();
     this.isHover = false;
     this.isDragging = false;
-    this.child = null; // 새로 추가된 속성
+    this.child = null;
   }
 
   applyGravity(gravity) {
     this.angleAcc =
       (sin(this.angle - (TAU / 360) * 90) * -gravity.y) / this.length;
+
+    if (this.child) {
+      this.child.applyGravity(gravity);
+    }
   }
 
   update() {
@@ -111,5 +115,6 @@ class Pendulum {
   addJoint(child, xOffset, yOffset) {
     this.child = child;
     this.child.pos.set(this.pos.x + xOffset, this.pos.y + yOffset);
+    this.child.isDragging = false;
   }
 }
