@@ -17,20 +17,27 @@ function draw() {
   pendulumA.applyGravity(gravity);
   pendulumA.update();
   pendulumA.display();
+  pendulumB.applyGravity(gravity);
+  pendulumB.update();
+  pendulumB.display();
 }
 
 function mouseMoved() {
   pendulumA.mouseMoved(mouseX, mouseY);
+  pendulumB.mouseMoved(mouseX, mouseY);
 }
 
 function mousePressed() {
   pendulumA.mousePressed(mouseX, mouseY);
+  pendulumB.mousePressed(mouseX, mouseY);
 }
 
 function mouseDragged() {
   pendulumA.mouseDragged(mouseX, mouseY);
+  pendulumB.mouseDragged(mouseX, mouseY);
 }
 
 function mouseReleased() {
   pendulumA.mouseReleased();
+  pendulumB.mouseReleased();
 }
