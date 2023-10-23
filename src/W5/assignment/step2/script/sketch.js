@@ -9,6 +9,7 @@ function setup() {
   pendulumB = new Pendulum(width / 2, 10, height / 3, (TAU / 360) * 30, 25);
   gravity = createVector(0, 0.5);
   pendulumA.addJoint(pendulumB, 0, 0);
+  background(255);
 }
 
 function draw() {
@@ -40,4 +41,6 @@ function mouseDragged() {
 function mouseReleased() {
   pendulumA.mouseReleased();
   pendulumB.mouseReleased();
+
+  background(255);
 }
