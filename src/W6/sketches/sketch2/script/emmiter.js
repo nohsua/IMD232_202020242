@@ -33,9 +33,6 @@ class Emitter {
   }
 
   update() {
-    // this.balls.forEach((each) => {
-    //   each.update();
-    // });
     for (let index = this.balls.length - 1; index >= 0; index--) {
       this.balls[index].update();
       if (this.balls[index].isDead()) {
