@@ -17,7 +17,7 @@ class Vehicle {
     others.forEach((eachOther) => {
       let dist = this.pos.dist(eachOther.pos);
       if (dist > 0 && dist <= eachOther.rad + this.rad) {
-        let towardMeVec = p5.Vecor.sub(this.pos, eachOther.pos);
+        let towardMeVec = p5.Vector.sub(this.pos, eachOther.pos);
         towardMeVec.setMag(1 / dist);
         steer.add(towardMeVec);
         cnt++;
