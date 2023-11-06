@@ -1,15 +1,15 @@
 class Vehicle {
   constructor(x, y, mass, rad, speedMx, forceMx, color) {
     // Vehicle의 속성 및 초기 상태 설정
-    this.pos = createVector(x, y);
-    this.vel = p5.Vector.random2D();
-    this.acc = createVector();
-    this.mass = mass;
-    this.rad = rad;
-    this.speedMx = speedMx;
-    this.forceMx = forceMx;
-    this.neighborhooodRad = 50;
-    this.color = color;
+    this.pos = createVector(x, y); // 위치 벡터
+    this.vel = p5.Vector.random2D(); // 무작위 방향의 속도 벡터
+    this.acc = createVector(); // 가속도 벡터
+    this.mass = mass; // 질량
+    this.rad = rad; // 반지름
+    this.speedMx = speedMx; // 최대 속도
+    this.forceMx = forceMx; // 최대 힘
+    this.neighborhooodRad = 50; // Vehicle이 주변 개체들과 관계를 맺을 수 있는 반경
+    this.color = color; // 색상
   }
 
   cohesion(others) {

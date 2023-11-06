@@ -24,6 +24,7 @@ class Traffic {
 
   addVehicle(x, y) {
     // 새로운 vehicle 추가
+    // 초기에 지정된 위치에 vehicle 객체를 생성하여 배열에 추가
     const mass = 1;
     this.vehicles.push(
       new Vehicle(x, y, mass, mass * 12, 5, 0.1, color(random(360), 100, 40))

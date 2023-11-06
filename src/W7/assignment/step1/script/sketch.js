@@ -9,6 +9,7 @@ function setup() {
 
   // Traffic 객체 생성과 초기 Vehicle 추가
   traffic = new Traffic();
+  // 초기에 10개의 무작위 위치에 Vehicle 추가
   for (let n = 0; n < 10; n++) {
     traffic.addVehicle(random(width), random(height));
   }
