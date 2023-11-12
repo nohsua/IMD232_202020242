@@ -8,6 +8,7 @@ var Engine = Matter.Engine,
   MouseConstraint = Matter.MouseConstraint,
   Mouse = Matter.Mouse,
   Bodies = Matter.Bodies;
+Vertices = Matter.Vertices;
 
 // create engine
 var engine = Engine.create(),
@@ -19,11 +20,12 @@ var render = Render.create({
   element: elem,
   engine: engine,
   options: {
-    width: 800,
-    height: 600,
+    width: elem.clientWidth,
+    height: elem.clientHeight,
     showAngleIndicator: true,
     showCollisions: true,
     showVelocity: true,
+    wireframeBackground: 'white',
   },
 });
 

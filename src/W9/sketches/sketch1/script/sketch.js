@@ -10,11 +10,11 @@ var Engine = Matter.Engine,
   Composite = Matter.Composite,
   Bodies = Matter.Bodies;
 
-// create engine
+// 필수과정 1 : create engine
 var engine = Engine.create(),
   world = engine.world;
 
-// create renderer
+// 필수과정 2 : create renderer
 const elem = document.querySelector('#canvas');
 var render = Render.create({
   element: elem,
