@@ -5,12 +5,13 @@ const {
   Body,
   Composite,
   Composites,
+  Common,
   Constraint,
   MouseConstraint,
   Mouse,
-  Bodies,
-  Common,
   Vertices,
+  Svg,
+  Bodies,
 } = Matter;
 
 Common.setDecomp(decomp);
@@ -120,6 +121,7 @@ function setup() {
 
 function draw() {
   m.pixelRatio = (pixelDensity() * width) / oWidth;
+
   background('white');
 
   ropeA.bodies.forEach((eachBody) => {
