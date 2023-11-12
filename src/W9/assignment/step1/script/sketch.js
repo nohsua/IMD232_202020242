@@ -1,106 +1,148 @@
-let engine;
-let world;
+const {
+  Engine,
+  Render,
+  Runner,
+  Body,
+  Composite,
+  Composites,
+  Constraint,
+  MouseConstraint,
+  Mouse,
+  Bodies,
+  Common,
+  Vertices,
+} = Matter;
+
+Common.setDecomp(decomp);
+
+// create engine
+const engine = Engine.create(),
+  world = engine.world;
+
+// create runner
+const runner = Runner.create();
+
+const oWidth = 800;
+const oHeight = 600;
+
 let ropeA;
 let ropeB;
 let ropeC;
-let mouseConstraint;
+
+let m;
+let mc;
 
 function setup() {
-  createCanvas(800, 600);
+  setCanvasContainer('canvas', oWidth, oHeight, true);
 
-  // Initialize Matter.js
-  engine = Matter.Engine.create();
-  world = engine.world;
+  // add bodies
+  group = Body.nextGroup(true);
 
-  // Create ropes
-  ropeA = createRope(100, 50, 8, 1, 10, 10, 50, 20, -25);
-  ropeB = createRope(350, 50, 10, 1, 10, 10, 20);
-  ropeC = createRope(
-    600,
-    50,
-    13,
-    1,
-    10,
-    10,
-    50,
-    20,
-    -20,
-    0,
-    0.3,
-    0,
-    -0.3,
-    0,
-    1,
-    0,
-    -20,
-    0,
-    0.5
+  ropeA = Composites.stack(100, 50, 8, 1, 10, 10, function (x, y) {
+    return Bodies.rectangle(x, y, 50, 20, {
+      collisionFilter: { group: group },
+    });
+  });
+
+  Composites.chain(ropeA, 0.5, 0, -0.5, 0, {
+    stiffness: 0.8,
+    length: 2,
+    render: { type: 'line' },
+  });
+
+  Composite.add(
+    ropeA,
+    Constraint.create({
+      bodyB: ropeA.bodies[0],
+      pointB: { x: -25, y: 0 },
+      pointA: { x: ropeA.bodies[0].position.x, y: ropeA.bodies[0].position.y },
+      stiffness: 0.5,
+    })
   );
 
-  // Add static ground
-  let ground = Matter.Bodies.rectangle(400, 600, 1200, 50.5, {
-    isStatic: true,
+  group = Body.nextGroup(true);
+
+  ropeB = Composites.stack(350, 50, 10, 1, 10, 10, function (x, y) {
+    return Bodies.circle(x, y, 20, { collisionFilter: { group: group } });
   });
-  Matter.World.add(world, [ropeA, ropeB, ropeC, ground]);
 
-  // Setup mouse control
-  let mouse = Matter.Mouse.create(canvas.elt),
-    mouseConstraint = Matter.MouseConstraint.create(engine, {
-      mouse: mouse,
-      constraint: {
-        stiffness: 0.2,
-        render: {
-          visible: false,
-        },
-      },
+  Composites.chain(ropeB, 0.5, 0, -0.5, 0, {
+    stiffness: 0.8,
+    length: 2,
+    render: { type: 'line' },
+  });
+
+  Composite.add(
+    ropeB,
+    Constraint.create({
+      bodyB: ropeB.bodies[0],
+      pointB: { x: -20, y: 0 },
+      pointA: { x: ropeB.bodies[0].position.x, y: ropeB.bodies[0].position.y },
+      stiffness: 0.5,
+    })
+  );
+
+  group = Body.nextGroup(true);
+
+  ropeC = Composites.stack(600, 50, 13, 1, 10, 10, function (x, y) {
+    return Bodies.rectangle(x - 20, y, 50, 20, {
+      collisionFilter: { group: group },
+      chamfer: 5,
     });
+  });
 
-  Matter.World.add(world, mouseConstraint);
+  Composites.chain(ropeC, 0.3, 0, -0.3, 0, { stiffness: 1, length: 0 });
+
+  Composite.add(
+    ropeC,
+    Constraint.create({
+      bodyB: ropeC.bodies[0],
+      pointB: { x: -20, y: 0 },
+      pointA: { x: ropeC.bodies[0].position.x, y: ropeC.bodies[0].position.y },
+      stiffness: 0.5,
+    })
+  );
+
+  m = Mouse.create(document.querySelector('.p5Canvas'));
+  m.pixelRatio = (pixelDensity() * width) / oWidth;
+  mc = MouseConstraint.create(engine, {
+    mouse: m,
+    constraint: {
+      stiffness: 0.2,
+    },
+  });
+
+  background('white');
+  Composite.add(world, mc);
+
+  Runner.run(runner, engine);
 }
 
 function draw() {
-  background(255);
-  Matter.Engine.update(engine);
+  m.pixelRatio = (pixelDensity() * width) / oWidth;
+  background('white');
 
-  // Draw ropes
-  drawRope(ropeA);
-  drawRope(ropeB);
-  drawRope(ropeC);
-}
+  ropeA.bodies.forEach((eachBody) => {
+    beginShape();
+    eachBody.vertices.forEach((each) => {
+      vertex((each.x / oWidth) * width, (each.y / oHeight) * height);
+    });
+    endShape(CLOSE);
+  });
 
-function drawRope(rope) {
-  for (let i = 1; i < rope.bodies.length; i++) {
-    let bodyA = rope.bodies[i - 1];
-    let bodyB = rope.bodies[i];
+  ropeB.bodies.forEach((eachBody) => {
+    beginShape();
+    eachBody.vertices.forEach((each) => {
+      vertex((each.x / oWidth) * width, (each.y / oHeight) * height);
+    });
+    endShape(CLOSE);
+  });
 
-    stroke(0);
-    strokeWeight(2);
-    line(
-      bodyA.position.x,
-      bodyA.position.y,
-      bodyB.position.x,
-      bodyB.position.y
-    );
-  }
-}
-
-function createRope(x, y, numBodies, bodyWidth, spacingX, spacingY, ...params) {
-  let group = Matter.Body.nextGroup(true);
-  let rope = Matter.Composites.stack(
-    x,
-    y,
-    numBodies,
-    1,
-    spacingX,
-    spacingY,
-    function (x, y) {
-      return Matter.Bodies.rectangle(x, y, bodyWidth, 20, {
-        collisionFilter: { group: group },
-      });
-    }
-  );
-
-  Matter.Composites.chain(rope, ...params);
-
-  return rope;
+  ropeC.bodies.forEach((eachBody) => {
+    beginShape();
+    eachBody.vertices.forEach((each) => {
+      vertex((each.x / oWidth) * width, (each.y / oHeight) * height);
+    });
+    endShape(CLOSE);
+  });
 }
