@@ -1,11 +1,10 @@
-const {
+var {
   Engine,
   Render,
   Runner,
   Body,
   Composite,
   Composites,
-  Common,
   Constraint,
   MouseConstraint,
   Mouse,
@@ -14,41 +13,39 @@ const {
   Bodies,
 } = Matter;
 
-Common.setDecomp(decomp);
-
-// create engine
-const engine = Engine.create(),
+// 엔진 만들기
+var engine = Engine.create(),
   world = engine.world;
 
-// create runner
-const runner = Runner.create();
+// 러너 만들기
+var runner = Runner.create();
 
-const oWidth = 800;
-const oHeight = 600;
+let ropeA, ropeB, ropeC;
 
-let ropeA;
-let ropeB;
-let ropeC;
+const A = [];
+const C = [];
 
-let m;
-let mc;
+let oWidth, oHeight;
 
 function setup() {
+  oWidth = 800;
+  oHeight = 600;
+
   setCanvasContainer('canvas', oWidth, oHeight, true);
 
-  // add bodies
-  group = Body.nextGroup(true);
+  for (let i = 0; i < 10; i++) {
+    A[i] = random(100, 200);
+    C[i] = random(200, 300);
+  }
 
-  ropeA = Composites.stack(100, 50, 8, 1, 10, 10, function (x, y) {
-    return Bodies.rectangle(x, y, 50, 20, {
-      collisionFilter: { group: group },
-    });
+  // add bodies
+  ropeA = Composites.stack(width / 4, 50, 8, 1, 10, 10, function (x, y) {
+    return Bodies.rectangle(x, y, 50, 20);
   });
 
   Composites.chain(ropeA, 0.5, 0, -0.5, 0, {
     stiffness: 0.8,
     length: 2,
-    render: { type: 'line' },
   });
 
   Composite.add(
@@ -61,16 +58,13 @@ function setup() {
     })
   );
 
-  group = Body.nextGroup(true);
-
-  ropeB = Composites.stack(350, 50, 10, 1, 10, 10, function (x, y) {
-    return Bodies.circle(x, y, 20, { collisionFilter: { group: group } });
+  ropeB = Composites.stack(width / 2, 50, 10, 1, 10, 10, function (x, y) {
+    return Bodies.circle(x, y, 20);
   });
 
   Composites.chain(ropeB, 0.5, 0, -0.5, 0, {
     stiffness: 0.8,
     length: 2,
-    render: { type: 'line' },
   });
 
   Composite.add(
@@ -83,68 +77,92 @@ function setup() {
     })
   );
 
-  group = Body.nextGroup(true);
-
-  ropeC = Composites.stack(600, 50, 13, 1, 10, 10, function (x, y) {
-    return Bodies.rectangle(x - 20, y, 50, 20, {
-      collisionFilter: { group: group },
-      chamfer: 5,
-    });
+  ropeC = Composites.stack((width * 3) / 4, 50, 8, 1, 10, 10, function (x, y) {
+    return Bodies.rectangle(x, y, 50, 20);
   });
 
-  Composites.chain(ropeC, 0.3, 0, -0.3, 0, { stiffness: 1, length: 0 });
+  Composites.chain(ropeC, 0.5, 0, -0.5, 0, {
+    stiffness: 0.8,
+    length: 2,
+  });
 
   Composite.add(
     ropeC,
     Constraint.create({
       bodyB: ropeC.bodies[0],
-      pointB: { x: -20, y: 0 },
+      pointB: { x: -25, y: 0 },
       pointA: { x: ropeC.bodies[0].position.x, y: ropeC.bodies[0].position.y },
       stiffness: 0.5,
     })
   );
 
-  m = Mouse.create(document.querySelector('.p5Canvas'));
-  m.pixelRatio = (pixelDensity() * width) / oWidth;
-  mc = MouseConstraint.create(engine, {
-    mouse: m,
+  // add mouse control
+  let mouse = Mouse.create(document.querySelector('.p5Canvas'));
+  mouse.pixelRatio = (pixelDensity() * width) / oWidth;
+  let mouseConstraint = MouseConstraint.create(engine, {
+    mouse: mouse,
     constraint: {
       stiffness: 0.2,
     },
   });
 
-  background('white');
-  Composite.add(world, mc);
+  Composite.add(world, [mouseConstraint, ropeA, ropeB, ropeC]);
 
+  background('white');
   Runner.run(runner, engine);
 }
 
+const vertices = [
+  { x: 5.5 * 4, y: -4.8 * 4 },
+  { x: 7.6 * 4, y: -1.6 * 4 },
+  { x: 6.5 * 4, y: 1.8 * 4 },
+  { x: 2.7 * 4, y: 4.5 * 4 },
+  { x: -1.2 * 4, y: 4.2 * 4 },
+  { x: -3.6 * 4, y: 1.9 * 4 },
+  { x: -1.3 * 4, y: -2.8 * 4 },
+];
+
 function draw() {
-  m.pixelRatio = (pixelDensity() * width) / oWidth;
-
   background('white');
+  rectMode(CENTER);
+  noStroke();
 
-  ropeA.bodies.forEach((eachBody) => {
+  // ropeA에 도형 그리기
+  fill(255, 51, 0);
+  for (let i = 0; i < ropeA.bodies.length; i++) {
+    const pos = ropeA.bodies[i].position;
+    const angle = ropeA.bodies[i].angle;
+    push();
     beginShape();
-    eachBody.vertices.forEach((each) => {
-      vertex((each.x / oWidth) * width, (each.y / oHeight) * height);
+    translate(pos.x, pos.y);
+    rotate(angle);
+    vertices.forEach((each) => {
+      vertex(each.x, each.y);
     });
     endShape(CLOSE);
-  });
+    pop();
+  }
 
-  ropeB.bodies.forEach((eachBody) => {
+  // ropeB에 도형 그리기
+  fill(102, 102, 255);
+  for (let i = 0; i < ropeB.bodies.length; i++) {
+    const pos = ropeB.bodies[i].position;
+    circle(pos.x, pos.y, width / 25);
+  }
+
+  // ropeC에 도형 그리기
+  fill(0, 204, 51);
+  for (let i = 0; i < ropeC.bodies.length; i++) {
+    const pos = ropeC.bodies[i].position;
+    const angle = ropeC.bodies[i].angle;
+    push();
     beginShape();
-    eachBody.vertices.forEach((each) => {
-      vertex((each.x / oWidth) * width, (each.y / oHeight) * height);
+    translate(pos.x, pos.y);
+    rotate(angle);
+    vertices.forEach((each) => {
+      vertex(each.x, each.y);
     });
     endShape(CLOSE);
-  });
-
-  ropeC.bodies.forEach((eachBody) => {
-    beginShape();
-    eachBody.vertices.forEach((each) => {
-      vertex((each.x / oWidth) * width, (each.y / oHeight) * height);
-    });
-    endShape(CLOSE);
-  });
+    pop();
+  }
 }
