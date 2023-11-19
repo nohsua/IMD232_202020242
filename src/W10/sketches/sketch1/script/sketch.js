@@ -15,15 +15,8 @@ function setup() {
     for (let col = 0; col < colNum; col++) {
       const x = w * col;
       const y = h * row;
-      //   let state;
-      //   if (random() < 0.5) {
-      //     state = false;
-      //   } else {
-      //     state = true;
-      //   }
-
-      let state = random() < 0.5 ? false : true;
-      cells.push(new Cell(x, y, w, h));
+      let state = random() < 0.5;
+      cells.push(new Cell(x, y, w, h, state));
     }
   }
 

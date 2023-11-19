@@ -12,19 +12,19 @@ class Cell {
 
   addFriends(cellArray) {
     const idxList = [
-      this.idx - colNum - 1, // 왼위
-      this.idx - colNum, // 중위
-      this.idx - colNum + 1, // 오위
-      this.idx + 1, // 오
-      this.idx + colNum + 1, // 오아
-      this.idx + colNum, // 중아
-      this.idx + colNum - 1, // 왼아
-      this.idx - 1, // 왼
+      this.idx - colNum - 1, //왼위
+      this.idx - colNum, //중위
+      this.idx - colNum + 1, //오위
+      this.idx + 1, //오
+      this.idx + colNum + 1, //오아
+      this.idx + colNum, //중아
+      this.idx + colNum - 1, //왼아
+      this.idx - 1, //왼
     ];
 
     const myCol = this.idx % colNum;
     const myRow = floor(this.idx / colNum);
-    // 왼쪽 귀퉁이
+    //왼쪽 귀퉁이
     if (myCol === 0) {
       idxList[0] = -1;
       idxList[6] = -1;
@@ -36,7 +36,7 @@ class Cell {
       idxList[3] = -1;
       idxList[4] = -1;
     }
-    // 위쪽 귀퉁이
+    //위쪽 귀퉁이
     if (myRow === 0) {
       idxList[0] = -1;
       idxList[1] = -1;
@@ -56,11 +56,9 @@ class Cell {
 
   calcNextState() {
     let cnt = 0;
-    this.friends.forEach((eachFriends) => {
-      if (eachFriends?.state) {
-        // if (eachFriends.state) {
+    this.friends.forEach((eachFriend) => {
+      if (eachFriend?.state) {
         cnt++;
-        // }
       }
     });
 
