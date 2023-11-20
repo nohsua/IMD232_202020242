@@ -1,99 +1,103 @@
-const tiles = [];
-const rowNum = 50,
-  colNum = 50;
+const rows = 50;
+const cols = 50;
+const cellSize = 10;
+
+const rpStates = [0, 1, 2];
+const rpColors = {
+  0: [150, 0, 0], // rock
+  1: [0, 150, 0], // paper
+  2: [0, 0, 150], // scissors
+};
+
+let grid = [];
 
 function setup() {
-  setCanvasContainer('canvas', 1, 1, true);
-
-  const w = width / colNum;
-  const h = w;
-  for (let row = 0; row < rowNum; row++) {
-    for (let col = 0; col < colNum; col++) {
-      const x = w * col;
-      const y = h * row;
-      const newTile = new Cell(x, y, w, h);
-      tiles.push(newTile);
-    }
-  }
-  for (let row = 0; row < rowNum; row++) {
-    for (let col = 0; col < colNum; col++) {
-      const neighborsIdx = [
-        getIdx(row - 1, col - 1),
-        getIdx(row - 1, col),
-        getIdx(row - 1, col + 1),
-        getIdx(row, col + 1),
-        getIdx(row + 1, col + 1),
-        getIdx(row + 1, col),
-        getIdx(row + 1, col - 1),
-        getIdx(row, col - 1),
-      ];
-      if (col === 0) {
-        neighborsIdx[0] = -1;
-        neighborsIdx[6] = -1;
-        neighborsIdx[7] = -1;
-      } else if (col === colNum - 1) {
-        neighborsIdx[2] = -1;
-        neighborsIdx[3] = -1;
-        neighborsIdx[4] = -1;
-      }
-      if (row === 0) {
-        neighborsIdx[0] = -1;
-        neighborsIdx[1] = -1;
-        neighborsIdx[2] = -1;
-      } else if (row === rowNum - 1) {
-        neighborsIdx[4] = -1;
-        neighborsIdx[5] = -1;
-        neighborsIdx[6] = -1;
-      }
-      const neighbors = [];
-      neighborsIdx.forEach((eachIdx) => {
-        neighbors.push(eachIdx >= 0 ? tiles[eachIdx] : null);
-      });
-      const idx = getIdx(row, col);
-      tiles[idx].setNeighbors(neighbors);
-    }
-  }
-  randomSeed(1);
-  tiles.forEach((each) => {
-    if (random() > 0.5) each.state = true;
-  });
-
-  frameRate(15);
-  background(255);
-  tiles.forEach((each) => {
-    each.display(mouseX, mouseY);
-  });
+  createCanvas(cols * cellSize, rows * cellSize);
+  initializeGrid();
 }
 
 function draw() {
   background(255);
 
-  tiles.forEach((each) => {
-    each.calcNextState();
-  });
-  tiles.forEach((each) => {
-    each.update();
-  });
-
-  tiles.forEach((each) => {
-    each.display(mouseX, mouseY);
-  });
+  updateGrid();
+  displayGrid();
 }
 
-function getIdx(row, col) {
-  return row * colNum + col;
+function initializeGrid() {
+  for (let i = 0; i < rows; i++) {
+    grid[i] = [];
+    for (let j = 0; j < cols; j++) {
+      grid[i][j] = floor(random(3));
+    }
+  }
 }
 
-function mouseClicked() {
-  for (let idx = 0; idx < tiles.length; idx++)
-    if (tiles[idx].toggleState(mouseX, mouseY)) break;
+function updateGrid() {
+  const newGrid = createEmptyGrid();
+
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      const currentState = grid[i][j];
+      const neighbors = getNeighbors(i, j);
+
+      const winningNeighbors = getWinningNeighbors(currentState, neighbors);
+      const winningCount = winningNeighbors.length;
+
+      // Rule: If winning neighbors are 2 or less, stay in the current state (defense)
+      // If winning neighbors are more than 2, switch state with a randomly chosen winning neighbor (occupation)
+      newGrid[i][j] =
+        winningCount <= 2
+          ? currentState
+          : winningNeighbors[floor(random(winningCount))];
+    }
+  }
+
+  grid = newGrid;
 }
 
-function keyPressed() {
-  // tiles.forEach((each) => {
-  //   each.calcNextState();
-  // });
-  // tiles.forEach((each) => {
-  //   each.update();
-  // });
+function displayGrid() {
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      const state = grid[i][j];
+      const color = rpColors[state];
+
+      fill(color);
+      rect(j * cellSize, i * cellSize, cellSize, cellSize);
+    }
+  }
+}
+
+function createEmptyGrid() {
+  const newGrid = [];
+  for (let i = 0; i < rows; i++) {
+    newGrid[i] = new Array(cols).fill(null);
+  }
+  return newGrid;
+}
+
+function getNeighbors(row, col) {
+  const neighbors = [];
+  for (let i = -1; i <= 1; i++) {
+    for (let j = -1; j <= 1; j++) {
+      const newRow = row + i;
+      const newCol = col + j;
+
+      if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols) {
+        neighbors.push(grid[newRow][newCol]);
+      }
+    }
+  }
+  return neighbors;
+}
+
+function getWinningNeighbors(currentState, neighbors) {
+  const winningMoves = {
+    0: 2, // Rock wins against Scissors
+    1: 0, // Paper wins against Rock
+    2: 1, // Scissors win against Paper
+  };
+
+  return neighbors.filter(
+    (neighbor) => neighbor === winningMoves[currentState]
+  );
 }
