@@ -1,4 +1,3 @@
-// 상단의 막대기를 위한 용수철(spring) 그리기
 let springHeight = 32,
   left,
   right,
@@ -24,15 +23,32 @@ let ps = R, // 위치
 let circles = [];
 
 function setup() {
-  createCanvas(500, 600);
+  // 캔버스를 중앙에 위치시키기 위한 변수
+  let canvasX = windowWidth / 2 - 250; // 캔버스의 x 좌표
+  let canvasY = windowHeight / 2 - 300; // 캔버스의 y 좌표
+
+  // 캔버스 생성 및 위치 설정
+  createCanvas(500, 600).position(canvasX, canvasY);
   rectMode(CORNERS);
   noStroke();
   left = width / 2 - 100;
   right = width / 2 + 100;
+
+  // 추가: 초기에 원을 화면 위쪽 밖에 생성
+  for (let i = 0; i < 5; i++) {
+    let size = random(10, 30);
+    let angle = random(-PI / 4, PI / 4); // 무작위 각도 (-45도에서 45도 사이)
+    let speed = random(2, 5); // 무작위 속도
+    let x = random(width);
+    let y = -size / 2; // 화면 위쪽 밖에 위치
+
+    circles.push({ x, y, size, speed });
+  }
 }
 
 function draw() {
-  background('lightyellow');
+  background('#213D83');
+
   updateSpring();
   drawSpring();
   if (firstBounce) {
@@ -48,17 +64,30 @@ function drawSpring() {
 
   // 상단 막대기의 색상 설정하고 그리기
   if (over || move) {
-    fill('orange');
+    fill('#FFD451');
   } else {
-    fill('orange');
+    fill('white');
   }
 
   rect(left, ps, right, ps + springHeight);
+
+  // 사다리꼴 모양의 지붕 그리기
+  fill('brown');
+  quad(
+    0,
+    height,
+    width,
+    height,
+    (7 * width) / 8,
+    height - 300,
+    width / 8,
+    height - 300
+  );
 }
 
 // 추가: 튕기는 원 그리기 함수
 function drawCircles() {
-  fill('skyblue');
+  fill('#C5EEFF');
   for (let circle of circles) {
     ellipse(circle.x, circle.y, circle.size, circle.size);
   }
@@ -75,27 +104,30 @@ function updateSpring() {
 
   // 추가: 튕기는 원 생성 조건 추가 (첫 번째 튕김 이후에만)
   if (abs(vs) < 0.1 && !move && firstBounce) {
-    vs = -vs; // 튕겨 올라가도록 방향 변경
+    vs = 0; // 튕길 때의 속도를 0으로 설정
 
     // 추가: 튕기는 원 추가
     let size = random(10, 30);
     let angle = random(-PI / 4, PI / 4); // 무작위 각도 (-45도에서 45도 사이)
     let speed = random(2, 5); // 무작위 속도
-    let x = width / 2 + cos(angle) * size;
-    let y = ps - springHeight / 2 - sin(angle) * size;
+    let x = random(width);
+    let y = -size / 2; // 화면 위쪽 밖에 위치
 
     circles.push({ x, y, size, speed });
   }
 
-  // 추가: 튕기는 원의 위치 업데이트
+  // 추가: 튕기는 원의 위치 업데이트 및 화면 바깥으로 나갔을 때 제거
   for (let i = circles.length - 1; i >= 0; i--) {
     let circle = circles[i];
     circle.y += circle.speed;
 
-    // 튕긴 원이 화면 바닥에 닿으면 위치 조정
-    if (circle.y + circle.size / 2 > height) {
-      circle.y = height - circle.size / 2;
-      circle.speed = 0; // 원이 멈추도록 속도를 0으로 설정
+    // 화면 바깥으로 나가면 배열에서 제거
+    if (
+      circle.y - circle.size / 2 > height ||
+      circle.x < 0 ||
+      circle.x > width
+    ) {
+      circles.splice(i, 1);
     }
   }
 
